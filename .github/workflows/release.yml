@@ -1,0 +1,63 @@
+{
+  'name': 'Release',
+  'on': { 'release': { 'types': ['published'] } },
+  'jobs':
+    {
+      'publish-release':
+        {
+          'runs-on': 'ubuntu-latest',
+          'strategy': { 'matrix': { 'node-version': ['16.x'] } },
+          'steps':
+            [
+              { 'uses': 'actions/checkout@v2' },
+              {
+                'name': 'Use Node.js ${{ matrix.node-version }}',
+                'uses': 'actions/setup-node@v1',
+                'with': { 'node-version': '${{ matrix.node-version }}' },
+              },
+              { 'name': 'Install', 'run': 'npm ci' },
+              {
+                'name': 'Build',
+                'run': 'npm run build',
+              },
+
+              {
+                'name': 'Upload win x64',
+                'uses': 'actions/upload-release-asset@v1.0.2',
+                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
+                'with':
+                  {
+                    'upload_url': '${{ github.event.release.upload_url }}',
+                    'asset_path': './build/valetudo-helper-miioota.exe',
+                    'asset_name': 'valetudo-helper-miioota.exe',
+                    'asset_content_type': 'binary/octet-stream',
+                  },
+              },
+              {
+                'name': 'Upload lin x64',
+                'uses': 'actions/upload-release-asset@v1.0.2',
+                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
+                'with':
+                  {
+                    'upload_url': '${{ github.event.release.upload_url }}',
+                    'asset_path': './build/valetudo-helper-miioota-amd64',
+                    'asset_name': 'valetudo-helper-miioota-amd64',
+                    'asset_content_type': 'binary/octet-stream',
+                  },
+              },
+              {
+                'name': 'Upload lin armv7',
+                'uses': 'actions/upload-release-asset@v1.0.2',
+                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
+                'with':
+                  {
+                    'upload_url': '${{ github.event.release.upload_url }}',
+                    'asset_path': './build/valetudo-helper-miioota-armv7',
+                    'asset_name': 'valetudo-helper-miioota-armv7',
+                    'asset_content_type': 'binary/octet-stream',
+                  },
+              },
+            ],
+        },
+    },
+}
