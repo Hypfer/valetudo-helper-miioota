@@ -98,14 +98,24 @@ module.exports = async (filePath) => {
                 console.log("Exiting..");
 
                 process.exit(-1);
-            } else {
-                console.log(`Successfully discovered robot at ${instance.address}`);
             }
+
+            console.log(`Successfully discovered robot at ${instance.address}`);
 
 
             console.log("Reading firmware image..");
 
             const firmwareFile = fs.readFileSync(filePath);
+            
+            if (firmwareFile[0] === 0x1F && firmwareFile[1] === 0x8B) { //GZIP magic bytes
+                console.error("ERROR: Invalid firmware image. Make sure to use a .pkg file.");
+
+                console.log("Exiting..");
+
+                process.exit(-1);
+            }
+            
+            
             const md5 = crypto.createHash("md5").update(firmwareFile).digest("hex");
 
             console.log(`Successfully read firmware image. Size: ${Tools.CONVERT_BYTES_TO_HUMANS(firmwareFile.length)} MD5Sum: ${md5}`);
