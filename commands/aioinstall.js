@@ -1,11 +1,11 @@
-const path = require("path");
-const fs = require("fs");
-const crypto = require("crypto");
-const Tools = require("../utils/Tools");
-const dgram = require("dgram");
-const MiioSocket = require("../miio/MiioSocket");
-const express = require("express");
 const Codec = require("../miio/Codec");
+const crypto = require("crypto");
+const dgram = require("dgram");
+const express = require("express");
+const fs = require("fs");
+const MiioSocket = require("../miio/MiioSocket");
+const path = require("path");
+const Tools = require("../utils/Tools");
 
 const HELO = Buffer.from("21310020ffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "hex");
 
@@ -13,7 +13,7 @@ const HELO = Buffer.from("21310020ffffffffffffffffffffffffffffffffffffffffffffff
 
 module.exports = async (filePath) => {
     const pathToFirmwareImage = path.resolve(filePath);
-    if(!fs.existsSync(pathToFirmwareImage)) {
+    if (!fs.existsSync(pathToFirmwareImage)) {
         console.error(`ERROR: "${pathToFirmwareImage}" does not exist.`);
 
         console.log("\n\nExiting..");
@@ -27,8 +27,10 @@ module.exports = async (filePath) => {
 
 
 
-    const ourIP = Tools.GET_CURRENT_HOST_IPV4_ADDRESSES().filter(ip => ip.startsWith("192.168.8."))?.[0];
-    if(!ourIP) {
+    const ourIP = Tools.GET_CURRENT_HOST_IPV4_ADDRESSES().filter(ip => {
+        return ip.startsWith("192.168.8.");
+    })?.[0];
+    if (!ourIP) {
         console.error("ERROR: There's no network interface with an IPv4 address in 192.168.8.0/24.");
         console.error("We're not connected to the robots Wi-Fi Access Point");
 
@@ -56,7 +58,7 @@ module.exports = async (filePath) => {
             discoverySocket.send(HELO, MiioSocket.PORT, "192.168.8.255");
         }, 3000);
 
-    })
+    });
 
     discoverySocket.on("message", (incomingMsg, rinfo) => {
         const codec = new Codec({token: Buffer.from("ffffffffffffffffffffffffffffffff")});
@@ -64,7 +66,7 @@ module.exports = async (filePath) => {
 
         try {
             decoded = codec.decodeIncomingMiioPacket(incomingMsg);
-        } catch(e) {
+        } catch (e) {
             console.error("Error while decoding discovery response", {
                 err: e,
                 rinfo: rinfo,
@@ -74,7 +76,9 @@ module.exports = async (filePath) => {
             return;
         }
 
-        if(!discoveredInstances.find(i => i.deviceId === decoded.deviceId)) {
+        if (!discoveredInstances.find(i => {
+            return i.deviceId === decoded.deviceId;
+        })) {
             discoveredInstances.push({
                 deviceId: decoded.deviceId,
                 token: decoded.token,
@@ -87,7 +91,7 @@ module.exports = async (filePath) => {
 
 
     setTimeout(() => {
-        console.log(`Scan done.`);
+        console.log("Scan done.");
 
         if (discoveredInstances.length === 1) {
             const instance = discoveredInstances[0];
@@ -106,7 +110,7 @@ module.exports = async (filePath) => {
             console.log("Reading firmware image..");
 
             const firmwareFile = fs.readFileSync(filePath);
-            
+
             if (firmwareFile[0] === 0x1F && firmwareFile[1] === 0x8B) { //GZIP magic bytes
                 console.error("ERROR: Invalid firmware image. Make sure to use a .pkg file.");
 
@@ -114,8 +118,8 @@ module.exports = async (filePath) => {
 
                 process.exit(-1);
             }
-            
-            
+
+
             const md5 = crypto.createHash("md5").update(firmwareFile).digest("hex");
 
             console.log(`Successfully read firmware image. Size: ${Tools.CONVERT_BYTES_TO_HUMANS(firmwareFile.length)} MD5Sum: ${md5}`);
@@ -141,7 +145,7 @@ module.exports = async (filePath) => {
             let downloadStarted = false;
 
             let downloadTimeout = setTimeout(() => {
-                console.error(`ERROR: Did not receive a firmware download request after 30s`);
+                console.error("ERROR: Did not receive a firmware download request after 30s");
 
                 console.log("\n\nExiting..");
 
@@ -181,7 +185,7 @@ module.exports = async (filePath) => {
                         });
 
                         console.log("Response from robot:", res);
-                    } catch(e) {
+                    } catch (e) {
                         console.error("ERROR: Error while sending update command to robot\nError:");
                         console.error(e);
 
@@ -189,7 +193,7 @@ module.exports = async (filePath) => {
 
                         process.exit(-1);
                     }
-                })()
+                })();
             });
 
             setInterval(() => {
@@ -198,13 +202,13 @@ module.exports = async (filePath) => {
                         if (!err && count === 0) {
                             console.log("");
                             console.log("Download seems to have finished.");
-                            console.log("The robot should now install the firmware. It will take 5-10 minutes.")
+                            console.log("The robot should now install the firmware. It will take 5-10 minutes.");
 
                             console.log("Exiting..");
 
                             process.exit(0);
                         }
-                    })
+                    });
                 }
             }, 1000);
 
@@ -223,4 +227,4 @@ module.exports = async (filePath) => {
             process.exit(-1);
         }
     }, 5000);
-}
+};

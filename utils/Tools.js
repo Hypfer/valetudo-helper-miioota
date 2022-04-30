@@ -70,6 +70,41 @@ class Tools {
             return `${bytes} bytes`;
         }
     }
+
+
+    static GET_VERSION() {
+        let version = "unknown";
+
+        try {
+            const rootDirectory = path.resolve(__dirname, "../");
+            const packageContent = fs.readFileSync(rootDirectory + "/package.json", {"encoding": "utf-8"});
+
+            if (packageContent) {
+                version = JSON.parse(packageContent.toString()).version;
+            }
+        } catch (e) {
+            //intentional
+        }
+
+        return version;
+    }
+
+    static GET_COMMIT_ID() {
+        let commitId = "unknown";
+
+        try {
+            const rootDirectory = path.resolve(__dirname, "../");
+            commitId = fs.readFileSync(rootDirectory + "/.git/HEAD", {"encoding": "utf-8"}).trim();
+
+            if (commitId.match(/^ref: refs\/heads\/master$/) !== null) {
+                commitId = fs.readFileSync(rootDirectory + "/.git/refs/heads/master", {"encoding": "utf-8"}).trim();
+            }
+        } catch (e) {
+            //intentional
+        }
+
+        return commitId;
+    }
 }
 
 module.exports = Tools;
