@@ -204,6 +204,10 @@ module.exports = async (filePath) => {
                             console.log("Download seems to have finished.");
                             console.log("The robot should now install the firmware. It will take 5-10 minutes.");
 
+                            console.log("\n\tIf you like this application, you may want to consider donating:");
+                            console.log("\thttps://github.com/sponsors/Hypfer");
+
+
                             console.log("Exiting..");
 
                             process.exit(0);

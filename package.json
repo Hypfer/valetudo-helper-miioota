@@ -1,6 +1,6 @@
 {
   "name": "valetudo-helper-miioota",
-  "version": "2022.04.1",
+  "version": "2022.04.2",
   "description": "",
   "main": "app.js",
   "bin": "app.js",
