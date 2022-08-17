@@ -73,14 +73,14 @@ class MiioSocket {
                         this.codec.stamp.val < decodedIncomingPacket.stamp
                     ) {
                         // Keep-alive packet. Update our stamp and respond with echo
-                        this.codec.updateStamp(decodedIncomingPacket.val);
+                        this.codec.updateStamp(decodedIncomingPacket.stamp);
                         Logger.debug(">>> " + this.name + "*", {stamp: decodedIncomingPacket.stamp});
 
 
                         this.socket.send(incomingMsg, 0, incomingMsg.length, this.rinfo.port, this.rinfo.address);
                     }
                 } else {
-                    this.codec.updateStamp(decodedIncomingPacket.val);
+                    this.codec.updateStamp(decodedIncomingPacket.stamp);
 
                     /*
                         This exists so that the RetryWrapper can hook the message processing so that it
@@ -91,7 +91,7 @@ class MiioSocket {
                     }
                 }
             } else {
-                this.codec.updateStamp(decodedIncomingPacket.val);
+                this.codec.updateStamp(decodedIncomingPacket.stamp);
 
                 if (msg["id"] && (msg["result"] !== undefined || msg["error"] !== undefined)) {
                     const pendingRequestWithMatchingMsgId = this.pendingRequests[msg["id"]];
@@ -100,7 +100,15 @@ class MiioSocket {
                         clearTimeout(pendingRequestWithMatchingMsgId.timeout_id);
 
                         if (msg["error"] !== undefined) {
-                            Logger.info("Miio error response", msg);
+                            /*
+                                "user ack timeout" is sent by the miio_client if the robots business logic
+                                fails to respond to a request from us in a timely fashion
+                             */
+                            if (msg["error"].message !== "user ack timeout") {
+                                Logger.info("Miio error response", msg);
+                            } else {
+                                Logger.trace("Miio error response", msg);
+                            }
 
                             pendingRequestWithMatchingMsgId.reject(
                                 new MiioErrorResponseError(
