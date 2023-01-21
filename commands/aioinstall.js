@@ -186,6 +186,10 @@ module.exports = async (filePath) => {
         let downloadTimeout = setTimeout(() => {
             console.error("ERROR: Did not receive a firmware download request after 30s");
 
+            console.log("\nIf you are trying to upgrade the S5 from 2008 to 2034, you may have to install the 2034 manually with ssh.");
+            console.log("Checkout the following link for updating with ssh https://valetudo.cloud/pages/usage/upgrading.html");
+          
+
             console.log("\n\nExiting..");
 
             process.exit(-1);
