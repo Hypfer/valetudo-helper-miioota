@@ -57,6 +57,18 @@
                     'asset_content_type': 'binary/octet-stream',
                   },
               },
+              {
+                'name': 'Upload macos',
+                'uses': 'actions/upload-release-asset@v1.0.2',
+                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
+                'with':
+                  {
+                    'upload_url': '${{ github.event.release.upload_url }}',
+                    'asset_path': './build/valetudo-helper-miioota-macos',
+                    'asset_name': 'valetudo-helper-miioota-macos',
+                    'asset_content_type': 'binary/octet-stream',
+                  },
+              },
             ],
         },
     },

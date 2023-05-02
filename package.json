@@ -11,11 +11,12 @@
     "lint": "eslint .",
     "lint_fix": "eslint . --fix",
 
-    "build": "npm run build_win && npm run build_lin_amd64 && npm run build_lin_armv7",
+    "build": "npm run build_win && npm run build_lin_amd64 && npm run build_lin_armv7 && npm run build_macos",
     "build_win": "cross-env PKG_CACHE_PATH=./build_dependencies/pkg pkg --targets node16-win-x64 --compress Brotli --no-bytecode --public-packages \"*\" . --output ./build/valetudo-helper-miioota.exe",
     "build_lin_amd64": "cross-env PKG_CACHE_PATH=./build_dependencies/pkg pkg --targets node16-linuxstatic-x64 --compress Brotli --no-bytecode --public-packages \"*\" . --output ./build/valetudo-helper-miioota-amd64",
-    "build_lin_armv7": "cross-env PKG_CACHE_PATH=./build_dependencies/pkg pkg --targets node16-linuxstatic-armv7 --compress Brotli --no-bytecode --public-packages \"*\" . --output ./build/valetudo-helper-miioota-armv7"
-
+    "build_lin_armv7": "cross-env PKG_CACHE_PATH=./build_dependencies/pkg pkg --targets node16-linuxstatic-armv7 --compress Brotli --no-bytecode --public-packages \"*\" . --output ./build/valetudo-helper-miioota-armv7",
+    "build_macos": "cross-env PKG_CACHE_PATH=./build_dependencies/pkg pkg --targets node16-macos-x64 --compress Brotli --no-bytecode --public-packages \"*\" . --output ./build/valetudo-helper-miioota-macos"
+  
   },
   "pkg": {
     "assets": [
