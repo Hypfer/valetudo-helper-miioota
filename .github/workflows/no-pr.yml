@@ -1,0 +1,17 @@
+name: No PR
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  close_pull_request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Close PR
+        uses: peter-evans/close-pull@v3
+        with:
+          pull-request-number: ${{ github.event.pull_request.number }}
+          comment: This repository does not accept pull requests
+          delete-branch: true
