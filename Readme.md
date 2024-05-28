@@ -11,10 +11,23 @@ Those being:
 
 It comes as a single binary with no additional dependencies and requires only experience with a terminal.
 
+
+## Running `valetudo-helper-miiota`
 Simply download the latest binary [from the releases section](https://github.com/Hypfer/valetudo-helper-miioota/releases)
-and execute it in a terminal/powershell window.
+and execute it in a terminal/powershell window. 
+
+Only Windows and Linux are currently supported. If you're on another platform, it is advised to borrow a supported computer briefly, or use a Raspberry Pi/equivalent.
 
 
+### Unsupported platforms
+Please note: This is **Unsupported**, please don't file issues if you're experiencing problems on unsupported platforms.
+
+If, for any reason, you would like to run the tool on another platform than the supported ones, you may run
+
+    npm install
+	npm run -- install-firmware <filename>
+	
+In the above `<filename>` refers to the `.pkg` file you either built or downloaded from [DustBuilder](https://dustbuilder.dontvacuum.me).
 
 ## Valetudo helpers
 
